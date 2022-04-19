@@ -3,6 +3,20 @@
     padding: 0;
 }
 
+
+@mixin dropdown($maxWidth: 250px) {
+    box-shadow: 1px 1px 5px 2px #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    background: #fff;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width:$maxWidth;
+    z-index: 12;
+    cursor: auto;
+}
+
 .header{
     display: flex;
     justify-content: space-between;
@@ -93,18 +107,25 @@
     }
     .rightMenu{
         .support, .setting, .apps, .profile{
-            width: 26px;
-            height: 26px;
-            padding: 12px;
-            border-radius: 50%;
-            svg{
-                font-size: 24px;
-                color: #595959;
+            position: relative;
+            .icon{
+                width: 26px;
+                height: 26px;
+                padding: 12px;
+                border-radius: 50%;
+                cursor: pointer;
+                &:hover{
+                    background: #eee;
+                }
+                svg{
+                    font-size: 24px;
+                    color: #595959;
+                }
             }
-            &:hover{
-                background: #eee;
-            }
+
+
         }
+
     }
 }
 
@@ -179,6 +200,255 @@
                     }
                 }
             }
+        }
+    }
+}
+
+.supportDropDown{
+    @include dropdown($maxWidth:250px);
+    ul{
+        li{
+            list-style: none;
+            .link{
+                padding: 10px 15px;
+                color: #666666;
+                cursor: pointer;
+                &:hover{
+                    background: #eeeeee;
+                    color: #595959;
+                }
+            }
+            &:last-child .link{
+                border-top: 1px solid #ccc;
+            }
+        }
+    }
+}
+.googleApps{
+    @include dropdown($maxWidth:300px);
+    ul{
+        li{
+            list-style: none;
+            float: left;
+            width: 33.33%;
+            .link{
+                padding: 10px 15px;
+                color: #666666;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                border-radius: 5px;
+                &:hover{
+                    background: #eeeeee;
+                }
+
+                svg{
+                    font-size: 30px !important;
+                    color: #ff3d00 !important;
+                }
+                label{
+                    font-size: 14px;
+                    margin-top: 10px;
+                    color: #000;
+                }
+            }
+        }
+    }
+}
+
+.profileWrap{
+    @include dropdown($maxWidth:350px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    .imgUpload{
+        height: 70px;
+        width: 70px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 1px 1px 3px 4px #ccc;
+        position: relative;
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .inputWrap{
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #ffffff;
+            box-shadow: 1px 1px 3px 4px #ccc;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            input{
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 12;
+                opacity: 0;
+                cursor: pointer;
+            }
+            svg{
+                font-size: 14px;
+                padding: 4px;
+            }
+        }
+    }
+
+    .manageGoogle{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 20px 0;
+        font-size: 16px;
+        line-height: 24px;
+        border-bottom: 1px solid #ccc;
+        width: 100%;
+        .name{
+            color: #000;
+            font-weight: 400;
+        }
+        .email{
+            font-size: .8em;
+            color: #666666;
+        }
+        button{
+            background: #fff;
+            border-radius: 25px;
+            padding: 8px 27px;
+            margin-top: 15px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            color: #000;
+            &:hover{
+                background: #eee;
+            }
+        }
+    }
+    .addAccount{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: #000;
+        font-weight: 400;
+        padding: 20px 0;
+        border-bottom: 1px solid #ccc;
+        width: 100%;
+        svg{
+            font-size: 16px !important;
+            margin-right: 15px;
+        }
+    }
+    .signOut{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        color: #000;
+        font-weight: 400;
+        padding: 20px 0;
+        border-bottom: 1px solid #ccc;
+        width: 100%;
+        button{
+            background: #fff;
+            border-radius: 5px;
+            padding: 8px 27px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            color: #000;
+            &:hover{
+                background: #eee;
+            }
+        }
+    }
+    .extra{
+        font-size: 12px;
+        color: #666666;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 20px;
+        .link{
+            padding: 0 10px;
+            cursor: pointer;
+        }
+    }
+}
+.settingInner{
+    @include dropdown($maxWidth:280px);
+    padding: 0;
+    height: calc(100vh - 100px);
+    overflow: auto;
+    .quick{
+        padding: 15px;
+        border-bottom: 1px solid #ccc;
+    }
+    button.setting{
+        border-radius: 5px;
+        padding: 7px;
+        text-align: center;
+        width: 100%;
+        color: #1a73e8;
+        background: transparent;
+        border: 1px solid #ccc;
+    }
+    h4{
+        font-weight: normal;
+        padding-bottom: 15px;
+        font-size: 1rem;
+        letter-spacing: .1px;
+        color: #202124;
+    }
+    .density{
+        padding: 15px;
+        border-bottom: 1px solid #ccc;
+    }
+    h6{
+        font-size: 13px;
+        font-weight: normal;
+        margin-bottom: 10px;
+    }
+    ul{
+        li{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            .left{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: .875rem;
+                letter-spacing: .2px;
+                color: #202124;
+                input{margin-right: 10px}
+            }
+        }
+    }
+    .theme{
+        padding: 10px 15px;
+        display: inline-block;
+        border-bottom: 1px solid #ccc;
+        img{
+            float: left;
+            width: calc(25% - 12px);
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            height: 40px;
         }
     }
 }
