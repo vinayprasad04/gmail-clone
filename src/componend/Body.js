@@ -6,10 +6,10 @@ import LeftMenu from './body/LeftMenu';
 import MainListing from './body/MainListing';
 import UserList from './body/UserList';
 
-const Body =({leftMenuOpen})=> {
+const Body =({leftMenuOpen, onComposeClick})=> {
     return(
         <div className="mainContainer">
-            <LeftMenu leftMenuOpen={leftMenuOpen}/>
+            <LeftMenu leftMenuOpen={leftMenuOpen} onComposeClick={onComposeClick}/>
             <MainListing/>
             <UserList/>
         </div>

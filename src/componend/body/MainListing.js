@@ -1,13 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {MdArrowDropDown, MdVerticalSplit, MdLabelImportantOutline} from "react-icons/md";
 import {IoMdRefresh} from "react-icons/io";
 import {FiMoreVertical} from "react-icons/fi";
 import {BsKeyboardFill, BsFillInboxFill} from "react-icons/bs";
 import {GrFormNext, GrFormPrevious} from "react-icons/gr";
 import {ImUsers} from "react-icons/im";
-import {AiFillTag, AiOutlineStar} from "react-icons/ai";
+import {AiFillTag, AiOutlineStar, AiFillStar} from "react-icons/ai";
+import { emailService } from '../../services/api';
+import EmailDetail from '../EmailDetail';
 
 const MainListing = ()=>{
+    const [emails, setEmails] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedEmail, setSelectedEmail] = useState(null);
+    const [activeTab, setActiveTab] = useState('primary');
+
+    useEffect(() => {
+        fetchEmails();
+    }, [activeTab]);
+
+    const fetchEmails = async () => {
+        setLoading(true);
+        try {
+            const response = await emailService.getEmails(activeTab);
+            if (response.success) {
+                setEmails(response.emails);
+            }
+        } catch (error) {
+            console.error('Error fetching emails:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEmailClick = (email) => {
+        setSelectedEmail(email);
+    };
+
+    const handleToggleStar = async (id) => {
+        try {
+            const response = await emailService.toggleStar(id);
+            if (response.success) {
+                setEmails(emails.map(email =>
+                    email.id === id ? { ...email, isStarred: !email.isStarred } : email
+                ));
+                if (selectedEmail && selectedEmail.id === id) {
+                    setSelectedEmail({ ...selectedEmail, isStarred: !selectedEmail.isStarred });
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling star:', error);
+        }
+    };
+
+    const handleRefresh = () => {
+        fetchEmails();
+    };
+
     return(
         <div className="mailListing">
            <div className="filterUpper">
@@ -16,7 +65,7 @@ const MainListing = ()=>{
                    <div className="dropdown">
                       <MdArrowDropDown/>
                    </div>
-                   <div className="refreshIcon">
+                   <div className="refreshIcon" onClick={handleRefresh} style={{cursor: 'pointer'}}>
                        <IoMdRefresh/>
                    </div>
                    <div className="more">
@@ -25,7 +74,7 @@ const MainListing = ()=>{
                </div>
                <div className="rightFiter">
                    <div className="totalNum">
-                       1-100 of 8,599
+                       1-{emails.length} of {emails.length}
                    </div>
                    <div className="nextPrev">
                        <GrFormPrevious/>
@@ -45,313 +94,70 @@ const MainListing = ()=>{
            <div className="listInner">
                <div className="tab">
                    <ul>
-                       <li className={"active"}><button><BsFillInboxFill/> Primary</button></li>
-                       <li><button><ImUsers/> Social</button></li>
-                       <li><button><AiFillTag/> Promotion</button></li>
+                       <li className={activeTab === 'primary' ? 'active' : ''}>
+                           <button onClick={() => setActiveTab('primary')}>
+                               <BsFillInboxFill/> Primary
+                           </button>
+                       </li>
+                       <li className={activeTab === 'social' ? 'active' : ''}>
+                           <button onClick={() => setActiveTab('social')}>
+                               <ImUsers/> Social
+                           </button>
+                       </li>
+                       <li className={activeTab === 'promotions' ? 'active' : ''}>
+                           <button onClick={() => setActiveTab('promotions')}>
+                               <AiFillTag/> Promotion
+                           </button>
+                       </li>
                    </ul>
                </div>
                <div className="listing">
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                            <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                            <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                            Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                           <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                           <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                           Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                           <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                           <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                           Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                           <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                           <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                           Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                           <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                           <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                           Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                           <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                           <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                           Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
-                   <div className="item">
-                       <div className="checkBox">
-                           <input type="checkbox"/>
-                       </div>
-                       <div className="star">
-                           <AiOutlineStar/>
-                       </div>
-                       <div className="import">
-                           <MdLabelImportantOutline/>
-                       </div>
-                       <div className="subject">
-                           Quora Digest
-                       </div>
-                       <div className="summary">
-                           Should I leave my 20 LPA SDE job to carry out an MBA from the top IIMs?
-                           Many years ago in the early 1980's, a friend and colleague in SBI –
-                           a young officer who had joined SBI as a PO a few years back, wrote the test for IIM's
-                           and was called for the interview for
-                       </div>
-                       <div className="dateTime">
-                           7:44PM
-                       </div>
-                   </div>
+                   {loading ? (
+                       <div style={{padding: '20px', textAlign: 'center'}}>Loading emails...</div>
+                   ) : emails.length === 0 ? (
+                       <div style={{padding: '20px', textAlign: 'center'}}>No emails found</div>
+                   ) : (
+                       emails.map((email) => (
+                           <div
+                               key={email.id}
+                               className={`item ${!email.isRead ? 'unread' : ''}`}
+                               onClick={() => handleEmailClick(email)}
+                               style={{cursor: 'pointer'}}
+                           >
+                               <div className="checkBox">
+                                   <input type="checkbox" onClick={(e) => e.stopPropagation()}/>
+                               </div>
+                               <div className="star" onClick={(e) => {
+                                   e.stopPropagation();
+                                   handleToggleStar(email.id);
+                               }}>
+                                   {email.isStarred ? <AiFillStar color="#ffc107"/> : <AiOutlineStar/>}
+                               </div>
+                               <div className="import">
+                                   <MdLabelImportantOutline/>
+                               </div>
+                               <div className="subject">
+                                   {email.from.name}
+                               </div>
+                               <div className="summary">
+                                   <strong>{email.subject}</strong> - {email.snippet}
+                               </div>
+                               <div className="dateTime">
+                                   {email.time}
+                               </div>
+                           </div>
+                       ))
+                   )}
                </div>
            </div>
+           {selectedEmail && (
+               <EmailDetail
+                   email={selectedEmail}
+                   onClose={() => setSelectedEmail(null)}
+                   onBack={() => setSelectedEmail(null)}
+                   onToggleStar={handleToggleStar}
+               />
+           )}
         </div>
     )
 }

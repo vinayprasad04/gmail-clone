@@ -11,12 +11,12 @@ import {IoIosSend, IoIosTime, IoIosCreate} from "react-icons/io";
 import {MdOutlineLabelImportant, MdDrafts} from "react-icons/md";
 
 
-const LeftMenu = ({leftMenuOpen})=>{
+const LeftMenu = ({leftMenuOpen, onComposeClick})=>{
     console.log("leftMenuOpen inside",leftMenuOpen);
     return(
         <div className={`leftMenu ${!leftMenuOpen ?'small':''}`}>
             <div className="composeBtn">
-                <button>
+                <button onClick={onComposeClick}>
                     <GrAppsRounded color={"red"}/>
                     <label>Compose</label>
                 </button>
