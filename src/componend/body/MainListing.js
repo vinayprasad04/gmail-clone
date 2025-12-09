@@ -9,22 +9,53 @@ import {AiFillTag, AiOutlineStar, AiFillStar} from "react-icons/ai";
 import { emailService } from '../../services/api';
 import EmailDetail from '../EmailDetail';
 
-const MainListing = ()=>{
+const MainListing = ({activeFolder, searchQuery})=>{
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedEmail, setSelectedEmail] = useState(null);
     const [activeTab, setActiveTab] = useState('primary');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalEmails, setTotalEmails] = useState(0);
+    const [pageTokens, setPageTokens] = useState({1: null}); // Store page tokens
+    const [nextPageToken, setNextPageToken] = useState(null);
+    const emailsPerPage = 20;
 
     useEffect(() => {
+        // Reset pagination when tab, folder, or search query changes
+        setCurrentPage(1);
+        setPageTokens({1: null});
+        setNextPageToken(null);
+        setEmails([]); // Clear emails immediately
+    }, [activeTab, activeFolder, searchQuery]);
+
+    useEffect(() => {
+        // Fetch emails when page changes or after reset
         fetchEmails();
-    }, [activeTab]);
+    }, [currentPage]);
 
     const fetchEmails = async () => {
         setLoading(true);
         try {
-            const response = await emailService.getEmails(activeTab);
+            // Get the page token for current page
+            const token = pageTokens[currentPage] || null;
+
+            // Use activeFolder if provided, otherwise use activeTab
+            const category = activeFolder || activeTab;
+            const response = await emailService.getEmails(category, currentPage, emailsPerPage, token, searchQuery);
             if (response.success) {
                 setEmails(response.emails);
+                setTotalEmails(response.total || response.emails.length);
+
+                // Store next page token if available
+                if (response.nextPageToken) {
+                    setNextPageToken(response.nextPageToken);
+                    setPageTokens(prev => ({
+                        ...prev,
+                        [currentPage + 1]: response.nextPageToken
+                    }));
+                } else {
+                    setNextPageToken(null);
+                }
             }
         } catch (error) {
             console.error('Error fetching emails:', error);
@@ -57,6 +88,23 @@ const MainListing = ()=>{
         fetchEmails();
     };
 
+    const handleNextPage = () => {
+        const totalPages = Math.ceil(totalEmails / emailsPerPage);
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const startIndex = (currentPage - 1) * emailsPerPage + 1;
+    const endIndex = Math.min(currentPage * emailsPerPage, totalEmails);
+    const totalPages = Math.ceil(totalEmails / emailsPerPage);
+
     return(
         <div className="mailListing">
            <div className="filterUpper">
@@ -74,11 +122,23 @@ const MainListing = ()=>{
                </div>
                <div className="rightFiter">
                    <div className="totalNum">
-                       1-{emails.length} of {emails.length}
+                       {totalEmails > 0 ? `${startIndex}-${endIndex} of ${totalEmails}` : '0 of 0'}
                    </div>
                    <div className="nextPrev">
-                       <GrFormPrevious/>
-                       <GrFormNext/>
+                       <GrFormPrevious
+                           onClick={handlePrevPage}
+                           style={{
+                               cursor: currentPage > 1 ? 'pointer' : 'not-allowed',
+                               opacity: currentPage > 1 ? 1 : 0.5
+                           }}
+                       />
+                       <GrFormNext
+                           onClick={handleNextPage}
+                           style={{
+                               cursor: currentPage < totalPages ? 'pointer' : 'not-allowed',
+                               opacity: currentPage < totalPages ? 1 : 0.5
+                           }}
+                       />
                    </div>
                    <div className="split">
                     <MdVerticalSplit/>

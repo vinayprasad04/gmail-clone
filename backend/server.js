@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const emailRoutes = require('./routes/emailRoutes');
+const authRoutes = require('./routes/authRoutes');
+const { loadSavedTokens, hasValidCredentials, getAuthUrl } = require('./config/googleAuth');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/emails', emailRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -39,6 +42,18 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`API URL: http://localhost:${PORT}`);
+
+    // Try to load saved OAuth tokens
+    const tokensLoaded = loadSavedTokens();
+
+    if (tokensLoaded && hasValidCredentials()) {
+        console.log('✓ Gmail API is authorized and ready!');
+    } else {
+        console.log('\n⚠️  Gmail API Authorization Required!');
+        console.log('Please visit this URL to authorize:');
+        console.log(getAuthUrl());
+        console.log('\nOr access: http://localhost:5000/api/auth/google\n');
+    }
 });
 
 module.exports = app;

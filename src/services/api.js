@@ -22,11 +22,17 @@ export const emailService = {
     },
 
     // Get all emails
-    getEmails: async (category = 'primary', page = 1, limit = 50) => {
+    getEmails: async (category = 'primary', page = 1, limit = 50, pageToken = null, searchQuery = '') => {
         try {
-            const response = await api.get('/emails', {
-                params: { category, page, limit }
-            });
+            const params = { category, page, limit };
+            if (pageToken) {
+                params.pageToken = pageToken;
+            }
+            if (searchQuery) {
+                params.q = searchQuery;
+            }
+
+            const response = await api.get('/emails', { params });
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;

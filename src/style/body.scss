@@ -111,12 +111,17 @@
   .mailListing{
     width: 100%;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px); // Adjust based on header height
+
     .filterUpper{
       display: flex;
       justify-content: space-between;
       align-items: center;
       height: 50px;
       border-bottom: 1px solid #ccc;
+      flex-shrink: 0;
       svg{
         font-size: 21px;
         color: #595959;
@@ -156,10 +161,16 @@
       }
     }
     .listInner{
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
       .tab{
         display: inline-block;
         width: 100%;
         border-bottom: 1px solid #eee;
+        flex-shrink: 0;
         ul{
           li{
             list-style: none;
@@ -199,6 +210,28 @@
         }
       }
       .listing{
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+
         .item{
           display: flex;
           justify-content: space-between;

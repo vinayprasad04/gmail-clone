@@ -11,8 +11,19 @@ import {IoIosSend, IoIosTime, IoIosCreate} from "react-icons/io";
 import {MdOutlineLabelImportant, MdDrafts} from "react-icons/md";
 
 
-const LeftMenu = ({leftMenuOpen, onComposeClick})=>{
-    console.log("leftMenuOpen inside",leftMenuOpen);
+const LeftMenu = ({leftMenuOpen, onComposeClick, activeFolder, onFolderChange, emailCounts})=>{
+
+    const menuItems = [
+        { id: 'inbox', label: 'Inbox', icon: <BsInboxFill/>, category: 'inbox' },
+        { id: 'starred', label: 'Starred', icon: <AiFillStar/>, category: 'starred' },
+        { id: 'snoozed', label: 'Snoozed', icon: <IoIosTime/>, category: 'snoozed' },
+        { id: 'important', label: 'Important', icon: <MdOutlineLabelImportant/>, category: 'important' },
+        { id: 'sent', label: 'Sent', icon: <IoIosSend/>, category: 'sent' },
+        { id: 'drafts', label: 'Drafts', icon: <MdDrafts/>, category: 'drafts' },
+        { id: 'spam', label: 'Spam', icon: <RiSpamFill/>, category: 'spam' },
+        { id: 'trash', label: 'Trash', icon: <BsTrash2Fill/>, category: 'trash' },
+    ];
+
     return(
         <div className={`leftMenu ${!leftMenuOpen ?'small':''}`}>
             <div className="composeBtn">
@@ -23,57 +34,23 @@ const LeftMenu = ({leftMenuOpen, onComposeClick})=>{
             </div>
             <div className={'listInner'}>
                 <ul>
-                    <li>
-                        <div className="link active">
-                            <label><BsInboxFill/> <span className="text">Inbox</span></label>
-                            <em>3,800</em>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label><AiFillStar/> <span className="text">Starred</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label><IoIosTime/> <span className="text">Snoozed</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <MdOutlineLabelImportant/> <span className="text">Important</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <AiFillStar/> <span className="text">Chats</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <IoIosSend/> <span className="text">Sends</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <MdDrafts/> <span className="text">Drafts</span></label><em>80</em>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <RiMailSendFill/> <span className="text">All Mails</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <RiSpamFill/> <span className="text">Spam</span></label><em>50</em>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <BsTrash2Fill/> <span className="text">Trash</span></label>
-                        </div>
-                    </li>
+                    {menuItems.map((item) => (
+                        <li key={item.id}>
+                            <div
+                                className={`link ${activeFolder === item.category ? 'active' : ''}`}
+                                onClick={() => onFolderChange(item.category)}
+                                style={{cursor: 'pointer'}}
+                            >
+                                <label>
+                                    {item.icon}
+                                    <span className="text">{item.label}</span>
+                                </label>
+                                {emailCounts && emailCounts[item.category] > 0 && (
+                                    <em>{emailCounts[item.category]}</em>
+                                )}
+                            </div>
+                        </li>
+                    ))}
                     <li>
                         <div className="link">
                             <label> <BiCategoryAlt/> <span className="text">Categories</span></label>
@@ -81,35 +58,14 @@ const LeftMenu = ({leftMenuOpen, onComposeClick})=>{
                     </li>
                     <li>
                         <div className="link">
-                            <label> <CgMoreO/> <span className="text">More</span></label>
+                            <label> <GrSchedules/> <span className="text">Scheduled</span></label>
                         </div>
                     </li>
                     <li>
                         <div className="link">
-                            <label> <GrSchedules/> <span className="text">Schedules</span></label>
+                            <label> <RiMailSendFill/> <span className="text">All Mail</span></label>
                         </div>
                     </li>
-                    <li>
-                        <div className="link">
-                            <label> <SiGoogletagmanager/> <span className="text">Manage labels</span> </label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <IoIosCreate/> <span className="text">Create new labels</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <IoIosSend/> <span className="text">Sends</span></label>
-                        </div>
-                    </li>
-                    <li>
-                        <div className="link">
-                            <label> <IoIosSend/> <span className="text">Sends</span></label>
-                        </div>
-                    </li>
-
                 </ul>
             </div>
         </div>

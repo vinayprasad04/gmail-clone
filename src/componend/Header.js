@@ -305,7 +305,7 @@ const Setting =()=>{
 }
 
 const Header =(props)=>{
-   const {onMenuClick} = props;
+   const {onMenuClick, onSearch} = props;
     return(
         <div className={"header"}>
             <div className="leftNav">
@@ -317,7 +317,7 @@ const Header =(props)=>{
                 </div>
             </div>
 
-            <SearchHeader/>
+            <SearchHeader onSearch={onSearch}/>
 
             <div className="rightMenu">
                 <Support/>
